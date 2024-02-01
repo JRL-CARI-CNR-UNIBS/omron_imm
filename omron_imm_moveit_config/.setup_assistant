@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: omron_imm_description
+    relative_path: urdf/system.urdf.xacro
+  srdf:
+    relative_path: config/omron_imm.srdf
+  package_settings:
+    author_name: STIIMA
+    author_email: carilab@stiima.cnr.it
+    generated_timestamp: 1706782007
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
