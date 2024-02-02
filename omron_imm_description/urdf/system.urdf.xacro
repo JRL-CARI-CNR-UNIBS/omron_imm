@@ -106,7 +106,7 @@
   </joint>
 
   <!-- Force sensor and Gripper -->
-  <xacro:include filename="$(find robotiq_ft_sensor)/urdf/robotiq_ft300.urdf.xacro"/>
+  <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_ft300.urdf.xacro"/>
   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_140_macro.urdf.xacro"/>
 
   <xacro:robotiq_ft300 parent="$(arg prefix)flange" prefix="$(arg prefix)">
