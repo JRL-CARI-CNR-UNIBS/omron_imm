@@ -1,0 +1,21 @@
+repositories:
+  omron_control:
+    type: git
+    url: https://github.com/JRL-CARI-CNR-UNIBS/omron_control.git
+    version: master
+  omron_imm:
+    type: git
+    url: https://github.com/JRL-CARI-CNR-UNIBS/omron_imm.git
+    version: master
+  robotiq_ft_sensor_description:
+    type: git
+    url: https://github.com/JRL-CARI-CNR-UNIBS/robotiq_ft_sensor_description.git
+    version: master
+  ros2_robotiq_gripper:
+    type: git
+    url: https://github.com/PickNikRobotics/ros2_robotiq_gripper.git
+    version: main
+  stiima_tm12_ros2:
+    type: git
+    url: https://github.com/JRL-CARI-CNR-UNIBS/stiima_tm12_ros2.git
+    version: master
