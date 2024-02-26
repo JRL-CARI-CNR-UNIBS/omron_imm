@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, FindExecutable
+from launch.conditions import IfCondition
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -11,7 +12,9 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 def generate_launch_description():
   launch_arg = [
-    DeclareLaunchArgument('fake_hardware', default_value='true')
+    DeclareLaunchArgument('fake_hardware', default_value='true'),
+    DeclareLaunchArgument('rviz', default_value='true'),
+    DeclareLaunchArgument('ns', default_value='omron'),
   ]
 
   return LaunchDescription([*launch_arg, OpaqueFunction(function=launch_setup)])
@@ -19,7 +22,11 @@ def generate_launch_description():
 def launch_setup(context, *args, **kwargs):
 
   fake_hardware = LaunchConfiguration('fake_hardware')
+  rviz_arg = LaunchConfiguration('rviz')
+  ns = LaunchConfiguration('ns')
+
   print("Fake: " + fake_hardware.perform(context))
+  print("Rviz: " + rviz_arg.perform(context))
 
   xacro_path = PathJoinSubstitution([FindPackageShare("omron_imm_description"),"urdf","system.urdf.xacro"])
   moveit_config = (MoveItConfigsBuilder("omron_imm", package_name="omron_imm_moveit_config")
@@ -35,9 +42,11 @@ def launch_setup(context, *args, **kwargs):
   move_group_node = Node(
     package="moveit_ros_move_group",
     executable="move_group",
+    # namespace=ns,
     output="screen",
     parameters=[moveit_config.to_dict()],
     arguments=["--ros-args", "--log-level", "info"],
+    remappings=[("/joint_states", "/omron/joint_states")]
   )
 
   rviz_config = PathJoinSubstitution([FindPackageShare("omron_imm_app"),"rviz","default.rviz"])
@@ -45,7 +54,9 @@ def launch_setup(context, *args, **kwargs):
     package = "rviz2",
     executable="rviz2",
     name="rviz2",
+    # namespace=ns,
     arguments=["-d",rviz_config],
+    condition=IfCondition(rviz_arg),
     parameters=[
       moveit_config.robot_description,
       moveit_config.robot_description_semantic,
@@ -59,6 +70,7 @@ def launch_setup(context, *args, **kwargs):
     package="robot_state_publisher",
     executable="robot_state_publisher",
     name="robot_state_publisher",
+    namespace=ns,
     output="both",
     parameters=[moveit_config.robot_description],
   )
@@ -90,6 +102,7 @@ def launch_setup(context, *args, **kwargs):
     package="controller_manager",
     executable="ros2_control_node",
     # name="controller_manager",
+    namespace=ns,
     parameters=[ros2_controllers_path, robot_description],
     output="screen",
   )
@@ -97,16 +110,20 @@ def launch_setup(context, *args, **kwargs):
   joint_state_broadcaster_spawner = Node(
     package="controller_manager",
     executable="spawner",
+    namespace=ns,
     arguments=[
       "joint_state_broadcaster",
+      # "-c", f"{ns.perform(context)}/controller_manager"
     ],
   )
 
   tm12_controller_spawner = Node(
     package="controller_manager",
     executable="spawner",
+    namespace=ns,
     name="tm12_controller_spawner",
     arguments=["imm_controller", "-p", ros2_controllers_path],
+              #  "-c", f"{ns.perform(context)}/controller_manager"],
     output="screen"
   )
 
