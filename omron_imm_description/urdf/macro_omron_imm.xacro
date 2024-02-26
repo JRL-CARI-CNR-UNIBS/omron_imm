@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm">
+
+  <xacro:macro name="omron_imm" params="name prefix fake">
+
+  <!-- <xacro:arg name="fake" default="false"/>
+  <xacro:arg name="ns" default="" />
+  <xacro:arg name="prefix" default="" /> -->
+  <xacro:property name="trans_hw_iface" default="hardware_interface/PositionJointInterface" />
+  <!-- <xacro:arg name="use_ros2_control_gripper" default="false"/> -->
+
+<!-- Kinematics -->
+  <link name="${prefix}base_link"/>
+
+  <!-- LD60 -->
+  <xacro:include filename="$(find omron_description)/urdf/LD60.xacro"/>
+  
+  <xacro:LD60  prefix="${prefix}">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:LD60>
+
+  <!-- TM12 -->
+  <xacro:include filename="$(find tm_description)/xacro/macro.gazebo.xacro" />
+  <xacro:include filename="$(find tm_description)/xacro/macro.transmission.xacro" />
+  <xacro:include filename="$(find tm_description)/xacro/macro.materials.xacro" />
+
+  <xacro:include filename="$(find tm_description)/xacro/macro.tm12-nominal.urdf.xacro"/>
+
+  <xacro:tmr_gazebo ns="${prefix}" prefix="${prefix}" />
+  <xacro:tmr_transmission prefix="${prefix}" hw_iface="${trans_hw_iface}" />
+  <xacro:tmr_materials/>
+
+  <xacro:tm12 ns="${prefix}" prefix="${prefix}" />
+
+  <!-- Structure between LD60 and TM12 -->
+  <xacro:property name="bar_size" value="0.9 0.03 0.03"/>
+  <material name="basic_grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <link name="${prefix}right_bar">
+    <visual>
+      <geometry>
+        <box size="${bar_size}"/>
+      </geometry>
+      <material name="basic_grey"/>
+    </visual>
+  </link>
+  <link name="${prefix}left_bar">
+    <visual>
+      <geometry>
+        <box size="${bar_size}"/>
+      </geometry>
+      <material name="basic_grey"/>
+    </visual>
+  </link>
+  <link name="${prefix}tm_support">
+    <visual>
+      <geometry>
+        <box size="0.3 0.3 0.02"/>
+      </geometry>
+      <material name="basic_grey"/>
+    </visual>
+  </link>
+  <link name="${prefix}tm_controller">
+    <visual>
+      <geometry>
+        <box size="0.44 0.41 0.21"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.46 0.43 0.23"/>
+      </geometry>
+      <material name="red"/>
+    </collision>
+  </link>
+
+  <joint name="${prefix}pose_right_bar" type="fixed">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}right_bar"/>
+    <origin xyz="-0.18 0.13 0.41"/>
+  </joint>  
+
+  <joint name="${prefix}pose_left_bar" type="fixed">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}left_bar"/>
+    <origin xyz="-0.18 -0.13 0.41"/>
+  </joint>
+
+  <joint name="${prefix}pose_tm_support" type="fixed">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}tm_support"/>
+    <origin xyz="0.12 0.0 0.44"/>
+  </joint>
+
+  <joint name="${prefix}pose_tm_controller" type="fixed">
+    <parent link="${prefix}left_bar"/>
+    <child  link="${prefix}tm_controller"/>
+    <origin xyz="-0.26 0.13 0.12"/>
+  </joint>
+
+  <joint name="${prefix}lifter" type="fixed">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}base"/>
+    <origin xyz="0.12 -0.0 0.45" rpy=" 0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- Force sensor and Gripper -->
+  <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_ft300.urdf.xacro"/>
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_140_macro.urdf.xacro"/>
+
+  <xacro:robotiq_ft300 parent="${prefix}flange" prefix="${prefix}">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:robotiq_ft300>
+
+  <xacro:robotiq_gripper name="gripper" prefix="${prefix}" parent="${prefix}robotiq_ft_frame_id" include_ros2_control="false">
+    <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 0.0"/>
+  </xacro:robotiq_gripper>
+  <!-- <joint name="${prefix}from_sensor_to_gripper" type="fixed"> -->
+    <!-- <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 ${pi/2}"/> -->
+    <!-- <parent link="${prefix}robotiq_ft_frame_id"/> -->
+    <!-- <child link="${prefix}robotiq_arg2f_base_link"/> -->
+  <!-- </joint> -->
+
+  <link name="${prefix}tip"/>
+  <joint name="${prefix}to_tip" type="fixed">
+    <parent link="${prefix}robotiq_140_base_link"/>
+    <child link="${prefix}tip"/>
+    <origin xyz="0 0 0.1767" rpy="0 0 0"/>
+  </joint>
+
+<!-- ros2_control -->
+  <!-- LD60 -->
+  <xacro:include filename="$(find omron_hardware_interface)/urdf/omron.ros2_control.xacro"/>
+  <xacro:omron_aria name="omron_aria" use_fake_hardware="${fake}"/>
+
+  <!-- TM12 -->
+  <xacro:if value="${fake}">
+    <xacro:include filename="$(find omron_imm_moveit_config)/config/omron_imm.ros2_control.xacro"/>
+    <xacro:omron_imm_ros2_control name="tm12" initial_positions_file="$(find omron_imm_moveit_config)/config/initial_positions.yaml"/>
+  </xacro:if>
+  <xacro:unless value="${fake}">
+    <xacro:include filename="$(find tm_description)/xacro/tm12.ros2_control.xacro" />
+    <xacro:tm12_ros2_control name="tm12" prefix="${prefix}" />
+  </xacro:unless>
+
+</xacro:macro>
+</robot>
