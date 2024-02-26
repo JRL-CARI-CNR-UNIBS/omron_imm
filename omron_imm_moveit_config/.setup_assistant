@@ -7,7 +7,7 @@ moveit_setup_assistant_config:
   package_settings:
     author_name: STIIMA
     author_email: carilab@stiima.cnr.it
-    generated_timestamp: 1706782007
+    generated_timestamp: 1708968204
   control_xacro:
     command:
       - position
