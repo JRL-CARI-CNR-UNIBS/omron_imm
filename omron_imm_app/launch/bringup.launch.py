@@ -1,7 +1,8 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, FindExecutable
 from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -12,22 +13,18 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 def generate_launch_description():
   launch_arg = [
-    DeclareLaunchArgument('fake_hardware', default_value='true'),
-    DeclareLaunchArgument('rviz', default_value='true'),
-    DeclareLaunchArgument('ns', default_value='omron'),
+    DeclareLaunchArgument('use_fake_hardware', default_value='true'),
+    DeclareLaunchArgument('rviz',              default_value='true'),
+    DeclareLaunchArgument('ns',                default_value='omron'),
+    DeclareLaunchArgument('use_gripper',       default_value='true'),
+    DeclareLaunchArgument('use_moveit',        default_value='true'),
   ]
 
   return LaunchDescription([*launch_arg, OpaqueFunction(function=launch_setup)])
 
 def launch_setup(context, *args, **kwargs):
 
-  fake_hardware = LaunchConfiguration('fake_hardware')
-  rviz_arg = LaunchConfiguration('rviz')
-  ns = LaunchConfiguration('ns')
-
-  print("Fake: " + fake_hardware.perform(context))
-  print("Rviz: " + rviz_arg.perform(context))
-
+  fake_hardware = LaunchConfiguration('use_fake_hardware')
   xacro_path = PathJoinSubstitution([FindPackageShare("omron_imm_description"),"urdf","system.urdf.xacro"])
   moveit_config = (MoveItConfigsBuilder("omron_imm", package_name="omron_imm_moveit_config")
                                       .robot_description(
@@ -39,32 +36,47 @@ def launch_setup(context, *args, **kwargs):
                                       .to_moveit_configs()
   )
 
+  return [
+          *launch_moveit(context, moveit_config),
+          *launch_omron(context, moveit_config.robot_description),
+          *launch_gripper(context)
+          ]
+
+
+def launch_moveit(context, moveit_config):
+
+  use_moveit = LaunchConfiguration('use_moveit')
+
   move_group_node = Node(
     package="moveit_ros_move_group",
     executable="move_group",
     # namespace=ns,
+    condition=IfCondition(use_moveit),
     output="screen",
     parameters=[moveit_config.to_dict()],
     arguments=["--ros-args", "--log-level", "info"],
     remappings=[("/joint_states", "/omron/joint_states")]
   )
 
+  rviz_arg = LaunchConfiguration('rviz')
+
   rviz_config = PathJoinSubstitution([FindPackageShare("omron_imm_app"),"rviz","default.rviz"])
   rviz_node = Node(
     package = "rviz2",
     executable="rviz2",
-    name="rviz2",
     # namespace=ns,
     arguments=["-d",rviz_config],
     condition=IfCondition(rviz_arg),
     parameters=[
-      moveit_config.robot_description,
-      moveit_config.robot_description_semantic,
-      moveit_config.planning_pipelines,
-      moveit_config.robot_description_kinematics,
-      moveit_config.joint_limits,
+      moveit_config.to_dict()
     ]
   )
+
+  return [move_group_node, rviz_node]
+
+def launch_omron(context, robot_description: str):
+
+  ns = LaunchConfiguration('ns')
 
   robot_state_publisher_node = Node(
     package="robot_state_publisher",
@@ -72,7 +84,7 @@ def launch_setup(context, *args, **kwargs):
     name="robot_state_publisher",
     namespace=ns,
     output="both",
-    parameters=[moveit_config.robot_description],
+    parameters=[robot_description],
   )
 
   ros2_controllers_path = PathJoinSubstitution([
@@ -81,16 +93,14 @@ def launch_setup(context, *args, **kwargs):
     "ros2_controllers.yaml"
   ])
 
-  robot_description_content = Command(
-      [
-          PathJoinSubstitution([FindExecutable(name="xacro")]),
-          " ",
-          xacro_path,
-          " fake:=",fake_hardware,
-      ]
-  )
-  robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
-
+  # robot_description_content = Command(
+  #     [
+  #         FindExecutable(name="xacro"),
+  #         " ", xacro_path,
+  #         " fake:=",fake_hardware,
+  #     ]
+  # )
+  # robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
 
   # joint_state_publisher_node = Node(
   #   package="joint_state_publisher",
@@ -107,32 +117,67 @@ def launch_setup(context, *args, **kwargs):
     output="screen",
   )
 
+  controller_manager_name = f"/{ns.perform(context)}/controller_manager"
+
   joint_state_broadcaster_spawner = Node(
     package="controller_manager",
     executable="spawner",
-    namespace=ns,
     arguments=[
       "joint_state_broadcaster",
-      # "-c", f"{ns.perform(context)}/controller_manager"
+      "-c", controller_manager_name
     ],
   )
 
   tm12_controller_spawner = Node(
     package="controller_manager",
     executable="spawner",
-    namespace=ns,
-    name="tm12_controller_spawner",
-    arguments=["imm_controller", "-p", ros2_controllers_path],
-              #  "-c", f"{ns.perform(context)}/controller_manager"],
+    arguments=["joint_trajectory_controller", "-p", ros2_controllers_path,
+               "-c", controller_manager_name
+               ],
     output="screen"
   )
 
-  return [
-    move_group_node,
-    rviz_node,
-    robot_state_publisher_node,
+  return [robot_state_publisher_node,
     # joint_state_publisher_node,
     ros2_control_node,
     joint_state_broadcaster_spawner,
-    tm12_controller_spawner
+    tm12_controller_spawner]
+
+def launch_gripper(context):
+
+  use_gripper = LaunchConfiguration('use_gripper')
+  ns = LaunchConfiguration('ns')
+
+  controller_manager_name = f"/{ns.perform(context)}/controller_manager"
+
+    # gripper_launch = IncludeLaunchDescription(
+  #   PythonLaunchDescriptionSource(
+  #     PathJoinSubstitution([
+  #       FindPackageShare('omron_imm_app'), 
+  #       'launch', 
+  #       'gripper.launch.py'
+  #     ])
+  #   ),
+  #   # launch_arguments={'robot_description': robot_description}.items(),
+  # )
+
+  robotiq_gripper_controller_spawner = Node(
+      package="controller_manager",
+      executable="spawner",
+      arguments=["robotiq_gripper_controller", 
+                 "--controller-manager", controller_manager_name],
+      condition=IfCondition(use_gripper)
+  )
+
+  robotiq_activation_controller_spawner = Node(
+      package="controller_manager",
+      executable="spawner",
+      arguments=["robotiq_activation_controller", 
+                 "--controller-manager", controller_manager_name],
+      condition=IfCondition(use_gripper)
+  )
+
+  return [
+    robotiq_gripper_controller_spawner,
+    robotiq_activation_controller_spawner
   ]
