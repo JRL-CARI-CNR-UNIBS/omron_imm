@@ -3,14 +3,19 @@
   ros__parameters:
     update_rate: 100  # Hz
 
-    imm_controller:
+    joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
-
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-imm_controller:
+    robotiq_gripper_controller:
+      type: position_controllers/GripperActionController
+
+    robotiq_activation_controller:
+      type: robotiq_controllers/RobotiqActivationController
+
+/omron/joint_trajectory_controller:
   ros__parameters:
     joints:
       - omron/joint_1
@@ -24,3 +29,12 @@ imm_controller:
     state_interfaces:
       - position
       - velocity
+
+/omron/robotiq_gripper_controller:
+  ros__parameters:
+    default: true
+    joint: omron/finger_joint
+
+/omron/robotiq_activation_controller:
+  ros__parameters:
+    default: true

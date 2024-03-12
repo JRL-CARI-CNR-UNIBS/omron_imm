@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm">
 
-  <xacro:macro name="omron_imm" params="name prefix fake">
+  <xacro:macro name="omron_imm" params="name prefix fake 
+                                        gripper:=true">
 
   <!-- <xacro:arg name="fake" default="false"/>
   <xacro:arg name="ns" default="" />
@@ -115,9 +116,12 @@
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:robotiq_ft300>
 
-  <xacro:robotiq_gripper name="gripper" prefix="${prefix}" parent="${prefix}robotiq_ft_frame_id" include_ros2_control="false">
-    <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 0.0"/>
-  </xacro:robotiq_gripper>
+  <xacro:if value="${gripper}">
+    <xacro:robotiq_gripper name="robotiq_2f_140" prefix="${prefix}" parent="${prefix}robotiq_ft_frame_id" include_ros2_control="true" use_fake_hardware="${fake}">
+      <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 0.0"/>
+    </xacro:robotiq_gripper>
+  </xacro:if>
+
   <!-- <joint name="${prefix}from_sensor_to_gripper" type="fixed"> -->
     <!-- <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 ${pi/2}"/> -->
     <!-- <parent link="${prefix}robotiq_ft_frame_id"/> -->
