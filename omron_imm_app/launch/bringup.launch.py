@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, FindExecutable
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, LaunchConfigurationEquals
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -74,6 +74,7 @@ def launch_moveit(context, moveit_config):
 
   return [move_group_node, rviz_node]
 
+
 def launch_omron(context, robot_description: str):
 
   ns = LaunchConfiguration('ns')
@@ -93,27 +94,18 @@ def launch_omron(context, robot_description: str):
     "ros2_controllers.yaml"
   ])
 
-  # robot_description_content = Command(
-  #     [
-  #         FindExecutable(name="xacro"),
-  #         " ", xacro_path,
-  #         " fake:=",fake_hardware,
-  #     ]
-  # )
-  # robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
-
-  # joint_state_publisher_node = Node(
-  #   package="joint_state_publisher",
-  #   executable="joint_state_publisher",
-  #   name="joint_state_publisher",
-  # )
+  ld60_params = PathJoinSubstitution([
+    FindPackageShare("omron_imm_description"),
+    "config",
+    "omron_ld60.yaml"
+  ])
 
   ros2_control_node = Node(
     package="controller_manager",
     executable="ros2_control_node",
     # name="controller_manager",
     namespace=ns,
-    parameters=[ros2_controllers_path, robot_description],
+    parameters=[ros2_controllers_path, ld60_params, robot_description],
     output="screen",
   )
 
@@ -137,11 +129,32 @@ def launch_omron(context, robot_description: str):
     output="screen"
   )
 
+  fake_hardware = LaunchConfiguration('use_fake_hardware')
+  support_nodes = Node(
+    package="omron_hardware_interface",
+    executable="omron_support_nodes",
+    namespace=ns,
+    parameters=[ld60_params],
+    output="screen",
+    condition=LaunchConfigurationEquals(fake_hardware, "false")
+  )
+
+  omron_state_bcast_spawner = Node(
+    package="controller_manager",
+    executable="spawner",
+    arguments=["omron_state_broadcaster",
+               "-c", controller_manager_name],
+    condition=LaunchConfigurationEquals(fake_hardware, "false")
+  )
+
   return [robot_state_publisher_node,
-    # joint_state_publisher_node,
     ros2_control_node,
     joint_state_broadcaster_spawner,
-    tm12_controller_spawner]
+    tm12_controller_spawner,
+    support_nodes,
+    omron_state_bcast_spawner
+    ]
+
 
 def launch_gripper(context):
 
