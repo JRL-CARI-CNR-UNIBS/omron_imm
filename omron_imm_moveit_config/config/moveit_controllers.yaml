@@ -17,3 +17,5 @@ moveit_simple_controller_manager:
       - omron/joint_4
       - omron/joint_5
       - omron/joint_6
+    action_ns: follow_joint_trajectory
+    default: true

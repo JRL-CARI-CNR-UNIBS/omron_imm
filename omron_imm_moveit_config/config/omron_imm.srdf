@@ -21,10 +21,12 @@
         <joint name="omron/joint_5" value="1.51"/>
         <joint name="omron/joint_6" value="0"/>
     </group_state>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="odom_to_base" type="planar" parent_frame="omron/odom" child_link="omron/base_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="omron/base_link_omron" link2="omron/link_0" reason="Adjacent"/>
-    <disable_collisions link1="omron/base_link_omron" link2="omron/link_1" reason="Never"/>
-    <disable_collisions link1="omron/base_link_omron" link2="omron/tm_controller" reason="Adjacent"/>
+    <disable_collisions link1="omron/base_link" link2="omron/link_0" reason="Adjacent"/>
+    <disable_collisions link1="omron/base_link" link2="omron/link_1" reason="Never"/>
+    <disable_collisions link1="omron/base_link" link2="omron/tm_controller" reason="Adjacent"/>
     <disable_collisions link1="omron/ft300_sensor" link2="omron/left_inner_finger" reason="Never"/>
     <disable_collisions link1="omron/ft300_sensor" link2="omron/left_inner_finger_pad" reason="Never"/>
     <disable_collisions link1="omron/ft300_sensor" link2="omron/left_inner_knuckle" reason="Never"/>
@@ -96,7 +98,7 @@
     <disable_collisions link1="omron/link_0" link2="omron/link_1" reason="Adjacent"/>
     <disable_collisions link1="omron/link_0" link2="omron/link_2" reason="Never"/>
     <disable_collisions link1="omron/link_0" link2="omron/link_4" reason="Never"/>
-    <disable_collisions link1="omron/link_0" link2="omron/tm_controller" reason="Adjacent"/>
+    <disable_collisions link1="omron/link_0" link2="omron/tm_controller" reason="Never"/>
     <disable_collisions link1="omron/link_1" link2="omron/link_2" reason="Adjacent"/>
     <disable_collisions link1="omron/link_1" link2="omron/link_4" reason="Never"/>
     <disable_collisions link1="omron/link_1" link2="omron/link_5" reason="Never"/>

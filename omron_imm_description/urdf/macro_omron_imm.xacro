@@ -2,7 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm">
 
   <xacro:macro name="omron_imm" params="name prefix fake 
-                                        gripper:=true">
+                                        gripper_ros2_control:=false
+                                        use_map:=true">
 
   <!-- <xacro:arg name="fake" default="false"/>
   <xacro:arg name="ns" default="" />
@@ -11,14 +12,11 @@
   <!-- <xacro:arg name="use_ros2_control_gripper" default="false"/> -->
 
 <!-- Kinematics -->
-  <link name="${prefix}base_link"/>
 
   <!-- LD60 -->
   <xacro:include filename="$(find omron_description)/urdf/LD60.xacro"/>
   
-  <xacro:LD60  prefix="${prefix}">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:LD60>
+  <xacro:LD60  prefix="${prefix}" use_map="true"/>
 
   <!-- TM12 -->
   <xacro:include filename="$(find tm_description)/xacro/macro.gazebo.xacro" />
@@ -116,17 +114,9 @@
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:robotiq_ft300>
 
-  <xacro:if value="${gripper}">
-    <xacro:robotiq_gripper name="robotiq_2f_140" prefix="${prefix}" parent="${prefix}robotiq_ft_frame_id" include_ros2_control="true" use_fake_hardware="${fake}">
-      <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 0.0"/>
-    </xacro:robotiq_gripper>
-  </xacro:if>
-
-  <!-- <joint name="${prefix}from_sensor_to_gripper" type="fixed"> -->
-    <!-- <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 ${pi/2}"/> -->
-    <!-- <parent link="${prefix}robotiq_ft_frame_id"/> -->
-    <!-- <child link="${prefix}robotiq_arg2f_base_link"/> -->
-  <!-- </joint> -->
+  <xacro:robotiq_gripper name="robotiq_2f_140" prefix="${prefix}" parent="${prefix}robotiq_ft_frame_id" include_ros2_control="${gripper_ros2_control}" use_fake_hardware="${fake}">
+    <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 0.0"/>
+  </xacro:robotiq_gripper>
 
   <link name="${prefix}tip"/>
   <joint name="${prefix}to_tip" type="fixed">
@@ -134,6 +124,12 @@
     <child link="${prefix}tip"/>
     <origin xyz="0 0 0.1767" rpy="0 0 0"/>
   </joint>
+
+  <!-- <joint name="${prefix}from_sensor_to_gripper" type="fixed"> -->
+    <!-- <origin xyz="0.0 0.0 -0.0065" rpy="0.0 0.0 ${pi/2}"/> -->
+    <!-- <parent link="${prefix}robotiq_ft_frame_id"/> -->
+    <!-- <child link="${prefix}robotiq_arg2f_base_link"/> -->
+  <!-- </joint> -->
 
 <!-- ros2_control -->
   <!-- LD60 -->
