@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm">
   <xacro:arg name="fake" default="true"/>
+  <xacro:arg name="use_gripper" default="false"/>
   <xacro:include filename="$(find omron_imm_description)/urdf/macro_omron_imm.xacro"/>
-  <xacro:omron_imm name="omron_imm" prefix="omron/" fake="$(arg fake)"/>
+  <xacro:omron_imm name="omron_imm" prefix="omron/" fake="$(arg fake)" gripper_ros2_control="$(arg use_gripper)"/>
 </robot>

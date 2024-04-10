@@ -25,11 +25,12 @@ def generate_launch_description():
 def launch_setup(context, *args, **kwargs):
 
   fake_hardware = LaunchConfiguration('use_fake_hardware')
+  use_gripper =   LaunchConfiguration('use_gripper')
   xacro_path = PathJoinSubstitution([FindPackageShare("omron_imm_description"),"urdf","system.urdf.xacro"])
   moveit_config = (MoveItConfigsBuilder("omron_imm", package_name="omron_imm_moveit_config")
                                       .robot_description(
                                         file_path=xacro_path.perform(context),
-                                        mappings={"fake":fake_hardware},
+                                        mappings={"fake":fake_hardware, "use_gripper":use_gripper},
                                       )
                                       .planning_scene_monitor(publish_robot_description=True, publish_robot_description_semantic=True)
                                       .planning_pipelines(pipelines=["ompl", "pilz_industrial_motion_planner"])
@@ -88,11 +89,11 @@ def launch_omron(context, robot_description: str):
     parameters=[robot_description],
   )
 
-  ros2_controllers_path = PathJoinSubstitution([
-    FindPackageShare("omron_imm_moveit_config"),
-    "config",
-    "ros2_controllers.yaml"
-  ])
+  # ros2_controllers_path = PathJoinSubstitution([
+  #   FindPackageShare("omron_imm_moveit_config"),
+  #   "config",
+  #   "ros2_controllers.yaml"
+  # ])
 
   ld60_params = PathJoinSubstitution([
     FindPackageShare("omron_imm_description"),
@@ -105,7 +106,7 @@ def launch_omron(context, robot_description: str):
     executable="ros2_control_node",
     # name="controller_manager",
     namespace=ns,
-    parameters=[ros2_controllers_path, ld60_params, robot_description],
+    parameters=[ld60_params, robot_description],
     output="screen",
   )
 
@@ -114,6 +115,7 @@ def launch_omron(context, robot_description: str):
   joint_state_broadcaster_spawner = Node(
     package="controller_manager",
     executable="spawner",
+    namespace=ns,
     arguments=[
       "joint_state_broadcaster",
       "-c", controller_manager_name
@@ -123,7 +125,8 @@ def launch_omron(context, robot_description: str):
   tm12_controller_spawner = Node(
     package="controller_manager",
     executable="spawner",
-    arguments=["joint_trajectory_controller", "-p", ros2_controllers_path,
+    namespace=ns,
+    arguments=["joint_trajectory_controller",
                "-c", controller_manager_name
                ],
     output="screen"
