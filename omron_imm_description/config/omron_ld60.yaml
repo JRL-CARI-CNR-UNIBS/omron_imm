@@ -1,43 +1,82 @@
-/omron/omron_goal_client:
-  ros__parameters:
-    map: "/omron/map" #topic
-    odom: "/omron/odom" #topic
-    frame: "omron/base_link" #tf
+omron:
+  omron_goal_client:
+    ros__parameters:
+      map: "/omron/map" #topic
+      odom: "/omron/odom" #topic
+      frame: "omron/base_link" #tf
 
-/omron/controller_manager:
-  ros__parameters:
-    omron_state_broadcaster:
-      type: omron/OmronStateBroadcaster
+  controller_manager:
+    ros__parameters:
+      omron_state_broadcaster:
+        type: omron/OmronStateBroadcaster
+      omron_fake_position_controller:
+        type: omron/OmronFakePositionController
 
-/omron/omron_state_broadcaster:
-  ros__parameters:
-    tf:
-      use_tf: true
-      to: "omron/base_link"
-      from: "map"
-      odom: "omron/odom"
-    interfaces:
-      velocity:
-        prefix: "omron_base/velocity"
-        command:
-          - "linear/velocity"
-          - "angular/velocity"
-        states:
-          - "linear/velocity"
-          - "angular/velocity"
-      pose:
-        prefix: "omron_base/pose"
-        states:
-        - "linear/x"
-        - "linear/y"
-        - "angular/z"
-      reference:
-        prefix: "omron_base/reference"
-        command:
+  omron_state_broadcaster:
+    ros__parameters:
+      from_deg_to_rad: false
+      tf:
+        use_tf: true
+        to: "omron/base_link"
+        from: "map"
+        odom: "omron/odom"
+      interfaces:
+        velocity:
+          prefix: "omron_base/velocity"
+          command:
+            - "linear/velocity"
+            - "angular/velocity"
+          states:
+            - "linear/velocity"
+            - "angular/velocity"
+        pose:
+          prefix: "omron_base/pose"
+          states:
           - "linear/x"
-    #          - "linear/y"
-    #          - "linear/z"
-    #          - "angular/x"
-    #          - "angular/y"
+          - "linear/y"
           - "angular/z"
-  
+        reference:
+          prefix: "omron_base/reference"
+          command:
+            - "linear/x"
+      #          - "linear/y"
+      #          - "linear/z"
+      #          - "angular/x"
+      #          - "angular/y"
+            - "angular/z"
+
+  omron_fake_position_controller:
+    ros__parameters:
+      feedback:
+        use_open_loop: true
+        kp: 0.0
+      cmd_vel_topic: "/omron/cmd_vel"
+      tf:
+        use_tf: true
+        to: "base_link"
+        from: "map"
+        odom: "odom"
+      interfaces:
+        velocity:
+          prefix: "omron_base/velocity"
+          command:
+            - "linear/velocity"
+            - "angular/velocity"
+          states:
+            - "linear/velocity"
+            - "angular/velocity"
+        pose:
+          prefix: "omron_base/pose"
+          command:
+          - "linear/x"
+          - "linear/y"
+          - "angular/z"
+          states:
+          - "linear/x"
+          - "linear/y"
+          - "angular/z"
+        reference:
+          prefix: "omron_base/reference"
+          command:
+            - "linear/x"
+            - "angular/z"

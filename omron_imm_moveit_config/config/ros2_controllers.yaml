@@ -15,6 +15,19 @@
     robotiq_activation_controller:
       type: robotiq_controllers/RobotiqActivationController
 
+/omron/joint_state_broadcaster:
+  ros__parameters:
+    joints:
+      - omron/joint_1
+      - omron/joint_2
+      - omron/joint_3
+      - omron/joint_4
+      - omron/joint_5
+      - omron/joint_6
+    interfaces:
+      - position
+      - velocity
+
 /omron/joint_trajectory_controller:
   ros__parameters:
     joints:
