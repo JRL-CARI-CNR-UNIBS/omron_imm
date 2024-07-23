@@ -147,7 +147,14 @@ def launch_omron(context, robot_description: str):
     executable="spawner",
     arguments=["omron_state_broadcaster",
                "-c", controller_manager_name],
-    condition=LaunchConfigurationEquals(fake_hardware, "false")
+  )
+
+  omron_fake_pose_spawner = Node(
+    package="controller_manager",
+    executable="spawner",
+    arguments=["omron_fake_position_controller",
+               "-c", controller_manager_name],
+    condition=IfCondition(fake_hardware)
   )
 
   return [robot_state_publisher_node,
@@ -155,7 +162,8 @@ def launch_omron(context, robot_description: str):
     joint_state_broadcaster_spawner,
     tm12_controller_spawner,
     support_nodes,
-    omron_state_bcast_spawner
+    omron_state_bcast_spawner,
+    omron_fake_pose_spawner
     ]
 
 
