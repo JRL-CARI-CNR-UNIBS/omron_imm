@@ -27,20 +27,8 @@
     <disable_collisions link1="omron/base_link" link2="omron/link_0" reason="Adjacent"/>
     <disable_collisions link1="omron/base_link" link2="omron/link_1" reason="Never"/>
     <disable_collisions link1="omron/base_link" link2="omron/tm_controller" reason="Adjacent"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/left_inner_finger" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/left_inner_finger_pad" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/left_inner_knuckle" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/left_outer_finger" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/left_outer_knuckle" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/link_4" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/link_5" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/link_6" reason="Adjacent"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/right_inner_finger" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/right_inner_finger_pad" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/right_inner_knuckle" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/right_outer_finger" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/right_outer_knuckle" reason="Never"/>
-    <disable_collisions link1="omron/ft300_sensor" link2="omron/robotiq_140_base_link" reason="Adjacent"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/link_6" reason="User"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/robotiq_140_base_link" reason="User"/>
     <disable_collisions link1="omron/left_inner_finger" link2="omron/left_inner_finger_pad" reason="Adjacent"/>
     <disable_collisions link1="omron/left_inner_finger" link2="omron/left_inner_knuckle" reason="Default"/>
     <disable_collisions link1="omron/left_inner_finger" link2="omron/left_outer_finger" reason="Adjacent"/>

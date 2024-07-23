@@ -16,7 +16,8 @@ def generate_launch_description():
     DeclareLaunchArgument('use_fake_hardware', default_value='true'),
     DeclareLaunchArgument('rviz',              default_value='true'),
     DeclareLaunchArgument('ns',                default_value='omron'),
-    DeclareLaunchArgument('use_gripper',       default_value='true'),
+    DeclareLaunchArgument('use_gripper',       default_value='false'),
+    DeclareLaunchArgument('use_ft_sensor',     default_value='false'),
     DeclareLaunchArgument('use_moveit',        default_value='true'),
   ]
 
@@ -25,11 +26,13 @@ def generate_launch_description():
 def launch_setup(context, *args, **kwargs):
 
   fake_hardware = LaunchConfiguration('use_fake_hardware')
+  use_gripper = LaunchConfiguration('use_gripper')
+  use_ft_sensor = LaunchConfiguration('use_ft_sensor')
   xacro_path = PathJoinSubstitution([FindPackageShare("omron_imm_description"),"urdf","system.urdf.xacro"])
   moveit_config = (MoveItConfigsBuilder("omron_imm", package_name="omron_imm_moveit_config")
                                       .robot_description(
                                         file_path=xacro_path.perform(context),
-                                        mappings={"fake":fake_hardware},
+                                        mappings={"fake" : fake_hardware, "use_gripper" : use_gripper, "use_ft_sensor" : use_ft_sensor},
                                       )
                                       .planning_scene_monitor(publish_robot_description=True, publish_robot_description_semantic=True)
                                       .planning_pipelines(pipelines=["ompl", "pilz_industrial_motion_planner"])
@@ -123,7 +126,7 @@ def launch_omron(context, robot_description: str):
   tm12_controller_spawner = Node(
     package="controller_manager",
     executable="spawner",
-    arguments=["joint_trajectory_controller", "-p", ros2_controllers_path,
+    arguments=["joint_trajectory_controller",
                "-c", controller_manager_name
                ],
     output="screen"
