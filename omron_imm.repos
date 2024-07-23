@@ -7,9 +7,9 @@ repositories:
     type: git
     url: https://github.com/JRL-CARI-CNR-UNIBS/omron_imm.git
     version: master
-  robotiq_ft_sensor_description:
+  rq_fts_ros2_driver:
     type: git
-    url: https://github.com/JRL-CARI-CNR-UNIBS/robotiq_ft_sensor_description.git
+    url: https://github.com/JRL-CARI-CNR-UNIBS/rq_fts_ros2_driver.git
     version: master
   ros2_robotiq_gripper:
     type: git
