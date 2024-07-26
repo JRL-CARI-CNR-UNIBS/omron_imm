@@ -20,11 +20,13 @@
       <xacro:tm12_ros2_control name="tm12" prefix="${prefix}" />
     </xacro:unless>
 
+    <!-- Force Torque Sensor -->
     <xacro:if value="${ft_sensor}">
       <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_fts.ros2_control.xacro"/>
-      <xacro:robotiq_fts_ros2_control name="${prefix}omron_imm/" tf_prefix="${prefix}"/>
+      <xacro:robotiq_fts_ros2_control name="${prefix}omron_imm/" tf_prefix="${prefix}" max_retries="1" read_rate="10"/>
     </xacro:if>
 
+    <!-- Robotiq Gripper -->
     <!-- TODO: include gazebo -->
     <xacro:if value="${gripper}">
       <xacro:include filename="$(find robotiq_description)/urdf/2f_140.ros2_control.xacro"/>

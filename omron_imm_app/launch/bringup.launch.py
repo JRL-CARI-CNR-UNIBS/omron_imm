@@ -110,6 +110,8 @@ def launch_omron(context, robot_description: str):
     namespace=ns,
     parameters=[ros2_controllers_path, ld60_params, robot_description],
     output="screen",
+    arguments=["--ros-args", "--log-level", "info"],
+    # prefix=["xterm -e cgdb --args"]
   )
 
   controller_manager_name = f"/{ns.perform(context)}/controller_manager"
