@@ -106,14 +106,14 @@
   </joint>
 
   <!-- Force sensor and Gripper -->
-  <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_ft300s.urdf.xacro"/>
+  <!-- <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_ft300s.urdf.xacro"/> -->
   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_140_macro.urdf.xacro"/>
 
-  <xacro:robotiq_ft300s parent="flange" tf_prefix="$(arg prefix)">
+  <!-- <xacro:robotiq_ft300s parent="flange" tf_prefix="$(arg prefix)">
     <origin xyz="0 0 -0.006" rpy="0 0 0"/>
-  </xacro:robotiq_ft300s>
+  </xacro:robotiq_ft300s> -->
 
-  <xacro:robotiq_gripper name="azrael_gripper" prefix="$(arg prefix)" parent="$(arg prefix)robotiq_ft_frame_id" include_ros2_control="false">
+  <xacro:robotiq_gripper name="azrael_gripper" prefix="${prefix}" parent="${prefix}flange" include_ros2_control="false">
     <origin xyz="0 0 -0.00695" rpy="0 0 ${pi/2}"/>
   </xacro:robotiq_gripper>
 
