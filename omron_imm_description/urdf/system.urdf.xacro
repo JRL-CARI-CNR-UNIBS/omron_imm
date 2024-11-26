@@ -16,24 +16,27 @@
   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_140_macro.urdf.xacro"/>
 
   <!-- Force Torque Sensor -->
+  <!--
   <xacro:robotiq_ft300s parent="flange" tf_prefix="$(arg prefix)">
     <origin xyz="0 0 -0.006" rpy="0 0 0"/>
   </xacro:robotiq_ft300s>
 
   <xacro:if value="$(arg use_ft_sensor)">
     <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_fts.ros2_control.xacro"/>
-    <xacro:robotiq_fts_ros2_control name="$(arg prefix)omron_imm/" tf_prefix="$(arg prefix)" max_retries="1" read_rate="10"/>
+    <xacro:robotiq_fts_ros2_control name="$(arg prefix)omron/" tf_prefix="$(arg prefix)" max_retries="1" read_rate="10"/>
   </xacro:if>
+  -->
 
   <!-- Robotiq Gripper -->
   <!-- TODO: include gazebo -->
-  <xacro:robotiq_gripper name="azrael_gripper" prefix="$(arg prefix)" parent="$(arg prefix)robotiq_ft_frame_id" include_ros2_control="false">
-    <origin xyz="0 0 -0.00695" rpy="0 0 ${pi/2}"/>
+  <xacro:robotiq_gripper name="azrael_gripper" prefix="$(arg prefix)" parent="$(arg prefix)flange" include_ros2_control="false">
+    <!-- <origin xyz="0 0 -0.00695" rpy="0 0 ${pi/2}"/> -->
+    <origin xyz="0 0 -0.006" rpy="0 0 0"/>
   </xacro:robotiq_gripper>
 
   <xacro:if value="$(arg use_gripper)">
     <xacro:include filename="$(find robotiq_description)/urdf/2f_140.ros2_control.xacro"/>
-    <xacro:robotiq_gripper_ros2_control name="$(arg prefix)omron_imm/robotiq_2f_140" prefix="$(arg prefix)"/>
+    <xacro:robotiq_gripper_ros2_control name="$(arg prefix)omron/robotiq_2f_140" prefix="$(arg prefix)"/>
   </xacro:if>
 
   <link name="$(arg prefix)tip"/>
