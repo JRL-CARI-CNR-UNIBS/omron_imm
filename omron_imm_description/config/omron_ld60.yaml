@@ -1,8 +1,8 @@
 omron:
   omron_goal_client:
     ros__parameters:
-      map: "/omron/map" #topic
-      odom: "/omron/odom" #topic
+      map: "omron/map" #topic
+      odom: "omron/odom" #topic
       frame: "omron/base_link" #tf
 
   controller_manager:
@@ -17,7 +17,7 @@ omron:
       from_deg_to_rad: false
       tf:
         use_tf: true
-        to: "omron/base_link"
+        to: "omron/base_footprint"
         from: "map"
         odom: "omron/odom"
       interfaces:
@@ -53,7 +53,7 @@ omron:
       cmd_vel_topic: "/omron/cmd_vel"
       tf:
         use_tf: true
-        to: "base_link"
+        to: "base_footprint"
         from: "map"
         odom: "odom"
       interfaces:
