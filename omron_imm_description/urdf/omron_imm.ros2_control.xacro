@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm_ros2_control">
 
-  <xacro:macro name="omron_imm_ros2_control" params="prefix
-                                                     fake
-                                                     ft_sensor
-                                                     gripper">
+  <xacro:macro name="omron_imm_ros2_control" params="prefix fake">
 
     <!-- LD60 -->
     <xacro:include filename="$(find omron_hardware_interface)/urdf/omron.ros2_control.xacro"/>
@@ -19,19 +16,6 @@
       <xacro:include filename="$(find tm_description)/xacro/tm12.ros2_control.xacro" />
       <xacro:tm12_ros2_control name="tm12" prefix="${prefix}" />
     </xacro:unless>
-
-    <!-- Force Torque Sensor -->
-    <xacro:if value="${ft_sensor}">
-      <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_fts.ros2_control.xacro"/>
-      <xacro:robotiq_fts_ros2_control name="${prefix}omron_imm/" tf_prefix="${prefix}" max_retries="1" read_rate="10"/>
-    </xacro:if>
-
-    <!-- Robotiq Gripper -->
-    <!-- TODO: include gazebo -->
-    <xacro:if value="${gripper}">
-      <xacro:include filename="$(find robotiq_description)/urdf/2f_140.ros2_control.xacro"/>
-      <xacro:robotiq_gripper_ros2_control name="${prefix}omron_imm/robotiq_2f_140" prefix="${prefix}"/>
-    </xacro:if>
 
 </xacro:macro>
 
