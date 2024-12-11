@@ -3,7 +3,7 @@ omron:
     ros__parameters:
       map: "/omron/map" #topic
       odom: "/omron/odom" #topic
-      frame: "omron/base_link" #tf
+      frame: "omron/base_footprint" #tf
 
   controller_manager:
     ros__parameters:
@@ -28,7 +28,7 @@ omron:
     ros__parameters:
       tf:
         use_tf: true
-        to: "omron/base_link"
+        to: "omron/base_footprint"
         from: "omron/map"
         odom: "omron/odom"
       interfaces:
