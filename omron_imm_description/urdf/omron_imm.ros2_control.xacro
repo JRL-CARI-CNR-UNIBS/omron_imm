@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm_ros2_control">
 
-  <xacro:macro name="omron_imm_ros2_control" params="prefix use_fake_tm use_fake_omron">
+  <xacro:macro name="omron_imm_ros2_control" params="prefix use_fake_tm use_fake_omron omron_ip:=1.2.3.4">
 
     <!-- LD60 -->
     <xacro:include filename="$(find omron_hardware_interface)/urdf/omron.ros2_control.xacro"/>
-    <xacro:omron_aria name="omron_aria" use_fake_hardware="${use_fake_omron}"/>
+    <xacro:omron_aria name="omron_aria" use_fake_hardware="${use_fake_omron}" ip_address="${omron_ip}"/>
 
     <!-- TM12 -->
     <xacro:if value="${use_fake_tm}">
