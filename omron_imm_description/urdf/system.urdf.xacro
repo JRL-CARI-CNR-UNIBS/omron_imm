@@ -2,49 +2,57 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omron_imm">
   <xacro:arg name="use_fake_tm" default="true"/>
   <xacro:arg name="use_fake_omron" default="true"/>
-  <xacro:arg name="prefix" default="omron"/>
-  <xacro:arg name="use_fake_ft_sensor" default="false"/>
-  <xacro:arg name="use_gripper" default="false"/>
-  
+  <xacro:arg name="prefix" default="omron/"/>
   <xacro:arg name="omron_ip" default="1.2.3.4"/>
 
-  <xacro:property name="prefix" value="$(arg prefix)/"/>
+  <xacro:arg name="include_robotiq_ft_sensor" default="false"/>
+  <xacro:arg name="use_fake_ft_sensor" default="false"/>
+
+  <xacro:arg name="include_robotiq_gripper" default="false"/>
+  <xacro:arg name="use_fake_gripper" default="false"/>
+
+  <xacro:property name="prefix" value="$(arg prefix)"/>
+
+  <xacro:property name="chain_last_link" value="${prefix}flange" lazy_eval="false"/>
+  <xacro:property name="chain_last_link_rotation" value="0.0" lazy_eval="false"/>
 
   <xacro:include filename="$(find omron_imm_description)/urdf/omron_imm.macro.xacro"/>
   <xacro:include filename="$(find omron_imm_description)/urdf/omron_imm.ros2_control.xacro"/>
 
-  <xacro:omron_imm name="${prefix}" />
-  <xacro:omron_imm_ros2_control prefix="${prefix}" use_fake_tm="$(arg use_fake_tm)" use_fake_omron="$(arg use_fake_omron)" omron_ip="$(arg omron_ip)"/>
-
-<!-- Force sensor and Gripper -->
-  <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_ft300s.urdf.xacro"/>
-  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_140_macro.urdf.xacro"/>
+  <xacro:omron_imm name="${prefix}"/>
+  <xacro:omron_imm_ros2_control
+    prefix="${prefix}"
+    use_fake_tm="$(arg use_fake_tm)"
+    use_fake_omron="$(arg use_fake_omron)"
+    include_robotiq_ft_sensor="$(arg include_robotiq_ft_sensor)"
+    use_fake_ft_sensor="$(arg use_fake_ft_sensor)"
+    include_robotiq_gripper="$(arg include_robotiq_gripper)"
+    use_fake_gripper="$(arg use_fake_gripper)"
+    omron_ip="$(arg omron_ip)"/>
 
   <!-- Force Torque Sensor -->
-  <xacro:robotiq_ft300s parent="flange" tf_prefix="${prefix}">
-    <origin xyz="0 0 -0.006" rpy="0 0 0"/>
-  </xacro:robotiq_ft300s>
-
-  <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_fts.ros2_control.xacro"/>
-  <xacro:robotiq_fts_ros2_control name="${prefix}" tf_prefix="${prefix}" max_retries="1" read_rate="10" use_fake_mode="$(arg use_fake_ft_sensor)"/>
-
-  <!-- Robotiq Gripper -->
-  <!-- TODO: include gazebo -->
-<!--
-  <xacro:robotiq_gripper name="azrael_gripper" prefix="${prefix}" parent="${prefix}flange" include_ros2_control="false">
-    <origin xyz="0 0 -0.006" rpy="0 0 0"/>
-  </xacro:robotiq_gripper>
-
-  <xacro:if value="$(arg use_gripper)">
-    <xacro:include filename="$(find robotiq_description)/urdf/2f_140.ros2_control.xacro"/>
-    <xacro:robotiq_gripper_ros2_control name="${prefix}omron/robotiq_2f_140" prefix="${prefix}"/>
+  <xacro:if value="$(arg include_robotiq_ft_sensor)">
+    <xacro:include filename="$(find robotiq_ft_sensor_description)/urdf/robotiq_ft300s.urdf.xacro"/>
+    <xacro:robotiq_ft300s parent="flange" tf_prefix="${prefix}">
+      <origin xyz="0 0 -0.006" rpy="0 0 0"/>
+    </xacro:robotiq_ft300s>
+    <xacro:property name="chain_last_link" value="${prefix}robotiq_ft_frame_id" lazy_eval="false"/>
+    <xacro:property name="chain_last_link_rotation" value="${pi/2}" lazy_eval="false"/>
   </xacro:if>
 
-  <link name="${prefix}tip"/>
-  <joint name="${prefix}to_tip" type="fixed">
-    <parent link="${prefix}robotiq_140_base_link"/>
-    <child link="${prefix}tip"/>
+  <!-- Robotiq 2F-140 Gripper -->
+  <xacro:if value="$(arg include_robotiq_gripper)">
+    <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_140_macro.urdf.xacro"/>
+    <xacro:robotiq_gripper name="omron_gripper" prefix="${prefix}" parent="${chain_last_link}" include_ros2_control="false">
+      <origin xyz="0 0 -0.006" rpy="0 0 ${chain_last_link_rotation}"/>
+    </xacro:robotiq_gripper>
+  </xacro:if>
+
+  <link name="${prefix}tcp"/>
+  <joint name="${prefix}to_tcp" type="fixed">
+    <parent link="${chain_last_link}"/>
+    <child link="${prefix}tcp"/>
     <origin xyz="0 0 0.1767" rpy="0 0 0"/>
   </joint>
--->
+
 </robot>

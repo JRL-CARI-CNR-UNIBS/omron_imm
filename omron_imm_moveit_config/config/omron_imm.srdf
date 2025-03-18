@@ -10,25 +10,28 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="imm">
-        <chain base_link="omron/base_link" tip_link="omron/tip"/>
+        <chain base_link="omron/base_footprint" tip_link="omron/tcp"/>
     </group>
-    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="home" group="imm">
-        <joint name="omron/joint_1" value="0.026"/>
-        <joint name="omron/joint_2" value="-0.8157"/>
-        <joint name="omron/joint_3" value="1.9688"/>
-        <joint name="omron/joint_4" value="-1.2323"/>
-        <joint name="omron/joint_5" value="1.51"/>
-        <joint name="omron/joint_6" value="0"/>
-    </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="odom_to_base" type="planar" parent_frame="omron/odom" child_link="omron/base_link"/>
+    <virtual_joint name="virtual_base" type="floating" parent_frame="omron/odom" child_link="omron/base_footprint"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="omron/base_link" link2="omron/link_0" reason="Adjacent"/>
-    <disable_collisions link1="omron/base_link" link2="omron/link_1" reason="Never"/>
-    <disable_collisions link1="omron/base_link" link2="omron/tm_controller" reason="Adjacent"/>
-    <disable_collisions link1="omron/ft300s_sensor" link2="omron/link_6" reason="User"/>
-    <disable_collisions link1="omron/ft300s_sensor" link2="omron/robotiq_140_base_link" reason="User"/>
+    <disable_collisions link1="omron/base_footprint" link2="omron/link_0" reason="Adjacent"/>
+    <disable_collisions link1="omron/base_footprint" link2="omron/link_1" reason="Never"/>
+    <disable_collisions link1="omron/base_footprint" link2="omron/tm_controller" reason="Adjacent"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/left_inner_finger" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/left_inner_finger_pad" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/left_inner_knuckle" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/left_outer_finger" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/left_outer_knuckle" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/link_4" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/link_5" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/link_6" reason="Adjacent"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/right_inner_finger" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/right_inner_finger_pad" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/right_inner_knuckle" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/right_outer_finger" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/right_outer_knuckle" reason="Never"/>
+    <disable_collisions link1="omron/ft300s_sensor" link2="omron/robotiq_140_base_link" reason="Adjacent"/>
     <disable_collisions link1="omron/left_inner_finger" link2="omron/left_inner_finger_pad" reason="Adjacent"/>
     <disable_collisions link1="omron/left_inner_finger" link2="omron/left_inner_knuckle" reason="Default"/>
     <disable_collisions link1="omron/left_inner_finger" link2="omron/left_outer_finger" reason="Adjacent"/>

@@ -1,41 +1,42 @@
 # This config file is used by ros2_control
-omron:
-  controller_manager:
-    ros__parameters:
-      update_rate: 500  # Hz
-
-      joint_trajectory_controller:
-        type: joint_trajectory_controller/JointTrajectoryController
-
-      joint_state_broadcaster:
-        type: joint_state_broadcaster/JointStateBroadcaster
-
-      robotiq_gripper_controller:
-        type: position_controllers/GripperActionController
-
-      robotiq_activation_controller:
-        type: robotiq_controllers/RobotiqActivationController
-
-  joint_trajectory_controller:
-    ros__parameters:
-      joints:
-        - omron/joint_1
-        - omron/joint_2
-        - omron/joint_3
-        - omron/joint_4
-        - omron/joint_5
-        - omron/joint_6
-      command_interfaces:
-        - position
-      state_interfaces:
-        - position
-        - velocity
-
-/omron/robotiq_gripper_controller:
+controller_manager:
   ros__parameters:
-    default: true
-    joint: omron/finger_joint
+    update_rate: 100  # Hz
 
-/omron/robotiq_activation_controller:
+    imm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    imm_with_ft_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+imm_controller:
   ros__parameters:
-    default: true
+    joints:
+      - omron/joint_1
+      - omron/joint_2
+      - omron/joint_3
+      - omron/joint_4
+      - omron/joint_5
+      - omron/joint_6
+    command_interfaces:
+      []
+    state_interfaces:
+      []
+imm_with_ft_controller:
+  ros__parameters:
+    joints:
+      - omron/joint_1
+      - omron/joint_2
+      - omron/joint_3
+      - omron/joint_4
+      - omron/joint_5
+      - omron/joint_6
+    command_interfaces:
+      []
+    state_interfaces:
+      []
