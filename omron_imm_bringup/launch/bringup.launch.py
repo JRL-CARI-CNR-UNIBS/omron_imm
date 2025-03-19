@@ -23,7 +23,7 @@ def generate_launch_description():
     DeclareLaunchArgument(name='use_fake_gripper',          default_value='false',   description='use mock for gripper'),
     DeclareLaunchArgument(name='omron_base_ip',             default_value='1.2.3.4', description='omron base ip address'),
     DeclareLaunchArgument(name='use_moveit',                default_value='true',    description='launch move_group'),
-    DeclareLaunchArgument(name='rviz',                      default_value='true',    description='launch rviz'),
+    DeclareLaunchArgument(name='rviz',                      default_value='false',    description='launch rviz'),
   ]
 
   return LaunchDescription([*launch_arg, OpaqueFunction(function=launch_setup)])
