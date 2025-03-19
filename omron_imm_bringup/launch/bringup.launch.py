@@ -121,6 +121,7 @@ def launch_setup(context, *args, **kwargs):
     package='omron_hardware_interface',
     executable='omron_support_nodes',
     parameters=[ld60_params],
+    arguments=[LaunchConfiguration('omron_ip')],
     output='screen',
     condition=UnlessCondition(use_fake_omron)
   )
