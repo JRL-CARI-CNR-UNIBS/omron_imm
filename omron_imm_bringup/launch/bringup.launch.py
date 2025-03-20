@@ -155,6 +155,13 @@ def launch_setup(context, *args, **kwargs):
   #   condition=IfCondition(use_fake_omron),
   # )
 
+  omron_omron_controller = Node(
+    package='controller_manager',
+    executable='spawner',
+    arguments=['omron_forward_controller',
+               '--controller-manager', 'controller_manager']
+  )
+
   return [
     move_group_node,
     rviz_node,
@@ -167,6 +174,7 @@ def launch_setup(context, *args, **kwargs):
         tm12_controller_spawner,
         support_nodes,
         omron_state_bcast_spawner,
+        omron_omron_controller
         # robotiq_gripper_controller_spawner,
         # robotiq_activation_controller_spawner,
     ])

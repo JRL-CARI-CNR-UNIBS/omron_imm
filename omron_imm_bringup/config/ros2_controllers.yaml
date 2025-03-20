@@ -82,6 +82,21 @@ omron:
     ros__parameters:
       default: true
 
+  omron_forward_controller:
+    ros__parameters:
+      cmd_vel_topic: "/omron/cmd_vel"
+      tf: # Unused
+        use_tf: true
+        to: "omron/base_footprint"
+        from: "map"
+        odom: "omron/odom"
+      interfaces:
+        velocity:
+          command: ["velocity/linear/velocity", "velocity/angular/velocity"]
+          states:  ["velocity/linear/velocity", "velocity/angular/velocity"]
+        reference:
+          prefix: "omron_base/reference"
+          command: ["linear/velocity", "angular/velocity"]
 
   omron_fake_pose_controller:
     ros__parameters:
