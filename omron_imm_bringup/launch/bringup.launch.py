@@ -23,7 +23,7 @@ def generate_launch_description():
     DeclareLaunchArgument(name='use_fake_gripper',          default_value='false',   description='use mock for gripper'),
     DeclareLaunchArgument(name='omron_base_ip',             default_value='1.2.3.4', description='omron base ip address'),
     DeclareLaunchArgument(name='use_moveit',                default_value='true',    description='launch move_group'),
-    DeclareLaunchArgument(name='rviz',                      default_value='false',    description='launch rviz'),
+    DeclareLaunchArgument(name='rviz',                      default_value='true',    description='launch rviz'),
   ]
 
   return LaunchDescription([*launch_arg, OpaqueFunction(function=launch_setup)])
@@ -40,8 +40,6 @@ def launch_setup(context, *args, **kwargs):
   include_robotiq_ft_sensor = LaunchConfiguration('include_robotiq_ft_sensor')
   include_robotiq_gripper   = LaunchConfiguration('include_robotiq_gripper')
 
-  omron_base_ip = LaunchConfiguration('omron_base_ip').perform(context)
-
   xacro_path = PathJoinSubstitution([FindPackageShare('omron_imm_description'),'urdf','system.urdf.xacro']).perform(context)
   moveit_config = (MoveItConfigsBuilder('omron_imm', package_name='omron_imm_moveit_config')
                                       .robot_description(
@@ -54,7 +52,7 @@ def launch_setup(context, *args, **kwargs):
                                           'include_robotiq_gripper' :     include_robotiq_gripper,
                                           'use_fake_gripper' :            use_fake_gripper,
                                           'prefix' :   f'{prefix}/',
-                                          'omron_ip' :                    omron_base_ip,
+                                          'omron_ip' :                    LaunchConfiguration('omron_base_ip').perform(context),
                                         }
                                       )
                                       .planning_scene_monitor(publish_robot_description=False, publish_robot_description_semantic=True)
@@ -123,7 +121,6 @@ def launch_setup(context, *args, **kwargs):
     package='omron_hardware_interface',
     executable='omron_support_nodes',
     parameters=[ld60_params],
-    arguments=[omron_base_ip],
     output='screen',
     condition=UnlessCondition(use_fake_omron)
   )
@@ -139,6 +136,7 @@ def launch_setup(context, *args, **kwargs):
       package="controller_manager",
       executable="spawner",
       arguments=["robotiq_gripper_controller"],
+      condition=UnlessCondition(use_fake_gripper)
   )
 
   robotiq_activation_controller_spawner = Node(
