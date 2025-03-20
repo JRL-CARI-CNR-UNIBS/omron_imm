@@ -35,7 +35,7 @@ def launch_setup(context, *args, **kwargs):
   use_fake_omron            = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_omron')).perform(context)
   use_fake_tm               = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_tm')).perform(context)
   use_fake_ft_sensor        = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_ft_sensor')).perform(context)
-  use_fake_gripper          = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_ft_sensor')).perform(context)
+  use_fake_gripper          = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_gripper')).perform(context)
 
   include_robotiq_ft_sensor = LaunchConfiguration('include_robotiq_ft_sensor')
   include_robotiq_gripper   = LaunchConfiguration('include_robotiq_gripper')
