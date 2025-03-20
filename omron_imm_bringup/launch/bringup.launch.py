@@ -158,8 +158,7 @@ def launch_setup(context, *args, **kwargs):
   omron_forward_controller = Node(
     package='controller_manager',
     executable='spawner',
-    arguments=['omron_forward_controller', 
-               '--ros-args', '--log-level', 'debug'],
+    arguments=['omron_forward_controller'],
   )
 
   return [

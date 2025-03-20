@@ -24,6 +24,9 @@ omron:
 
       robotiq_activation_controller:
         type: robotiq_controllers/RobotiqActivationController
+      
+      omron_forward_controller:
+        type: omron/OmronController
 
   omron_state_broadcaster:
     ros__parameters:
