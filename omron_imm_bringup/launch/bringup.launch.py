@@ -40,6 +40,8 @@ def launch_setup(context, *args, **kwargs):
   include_robotiq_ft_sensor = LaunchConfiguration('include_robotiq_ft_sensor')
   include_robotiq_gripper   = LaunchConfiguration('include_robotiq_gripper')
 
+  omron_base_ip = LaunchConfiguration('omron_base_ip').perform(context)
+
   xacro_path = PathJoinSubstitution([FindPackageShare('omron_imm_description'),'urdf','system.urdf.xacro']).perform(context)
   moveit_config = (MoveItConfigsBuilder('omron_imm', package_name='omron_imm_moveit_config')
                                       .robot_description(
@@ -52,7 +54,7 @@ def launch_setup(context, *args, **kwargs):
                                           'include_robotiq_gripper' :     include_robotiq_gripper,
                                           'use_fake_gripper' :            use_fake_gripper,
                                           'prefix' :   f'{prefix}/',
-                                          'omron_ip' :                    LaunchConfiguration('omron_base_ip').perform(context),
+                                          'omron_ip' :                    omron_base_ip,
                                         }
                                       )
                                       .planning_scene_monitor(publish_robot_description=False, publish_robot_description_semantic=True)
@@ -122,7 +124,8 @@ def launch_setup(context, *args, **kwargs):
     executable='omron_support_nodes',
     parameters=[ld60_params],
     output='screen',
-    condition=UnlessCondition(use_fake_omron)
+    condition=UnlessCondition(use_fake_omron),
+    arguments=[omron_base_ip]
   )
 
   omron_state_bcast_spawner = Node(
