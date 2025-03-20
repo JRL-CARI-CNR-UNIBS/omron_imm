@@ -136,7 +136,6 @@ def launch_setup(context, *args, **kwargs):
       package="controller_manager",
       executable="spawner",
       arguments=["robotiq_gripper_controller"],
-      condition=UnlessCondition(use_fake_gripper)
   )
 
   robotiq_activation_controller_spawner = Node(
@@ -165,7 +164,7 @@ def launch_setup(context, *args, **kwargs):
         tm12_controller_spawner,
         support_nodes,
         omron_state_bcast_spawner,
-        robotiq_gripper_controller_spawner,
-        robotiq_activation_controller_spawner,
+        # robotiq_gripper_controller_spawner,
+        # robotiq_activation_controller_spawner,
     ])
 ]
