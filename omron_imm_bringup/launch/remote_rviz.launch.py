@@ -63,8 +63,8 @@ def launch_setup(context, *args, **kwargs):
 
 
   rviz_arg = LaunchConfiguration('rviz')
-
-  rviz_config = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'default.rviz'])
+  #default.rviz
+  rviz_config = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'config_with_nav.rviz'])
   rviz_node = Node(
     package = 'rviz2',
     executable='rviz2',
