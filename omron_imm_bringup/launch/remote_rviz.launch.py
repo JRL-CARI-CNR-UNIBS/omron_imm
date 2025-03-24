@@ -74,7 +74,8 @@ def launch_setup(context, *args, **kwargs):
     ros_arguments=['--log-level','warn'],
     parameters=[
       moveit_config.to_dict()
-    ]
+    ],
+    namespace=prefix
   )
 
 
