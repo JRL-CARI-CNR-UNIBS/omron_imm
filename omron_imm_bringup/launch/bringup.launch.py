@@ -103,13 +103,15 @@ def launch_setup(context, *args, **kwargs):
     parameters=[ld60_params],
     output='screen',
     arguments=['--ros-args', '--log-level', 'info'],
-    remappings=[('~/robot_description', 'robot_description')]
+    remappings=[('~/robot_description', 'robot_description')],
+    namespace='omron'
   )
 
   joint_state_broadcaster_spawner = Node(
     package='controller_manager',
     executable='spawner',
     arguments=['joint_state_broadcaster'],
+    namespace='omron'
   )
 
   tm12_controller_spawner = Node(
