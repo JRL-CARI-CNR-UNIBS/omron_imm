@@ -72,6 +72,7 @@ def launch_setup(context, *args, **kwargs):
     parameters=[moveit_config.to_dict()],
     arguments=['--ros-args', '--log-level', 'info'],
     remappings=[('joint_states',f'{prefix}/joint_states')],
+    namespace=prefix
   )
 
   robot_state_publisher_node = Node(
@@ -104,14 +105,13 @@ def launch_setup(context, *args, **kwargs):
     output='screen',
     arguments=['--ros-args', '--log-level', 'info'],
     remappings=[('~/robot_description', 'robot_description')],
-    namespace='omron'
+    namespace=prefix
   )
 
   joint_state_broadcaster_spawner = Node(
     package='controller_manager',
     executable='spawner',
-    arguments=['joint_state_broadcaster'],
-    namespace='omron'
+    arguments=['joint_state_broadcaster']
   )
 
   tm12_controller_spawner = Node(
