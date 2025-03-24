@@ -72,6 +72,7 @@ def launch_setup(context, *args, **kwargs):
     parameters=[moveit_config.to_dict()],
     arguments=['--ros-args', '--log-level', 'info'],
     remappings=[('joint_states',f'{prefix}/joint_states')],
+    namespace=prefix
   )
 
   robot_state_publisher_node = Node(
