@@ -110,7 +110,7 @@ def launch_setup(context, *args, **kwargs):
     executable='ros2_control_node',
     parameters=[ld60_params],
     output='screen',
-    arguments=['--ros-args', '--log-level', 'debug'],
+    # arguments=['--ros-args', '--log-level', 'debug'],
     remappings=[('~/robot_description', 'robot_description')],
   )
 
