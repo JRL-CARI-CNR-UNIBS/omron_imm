@@ -111,7 +111,7 @@ def launch_setup(context, *args, **kwargs):
     parameters=[ld60_params],
     output='screen',
     # arguments=['--ros-args', '--log-level', 'debug'],
-    remappings=[('~/robot_description', 'robot_description')],
+    # remappings=[('~/robot_description', 'robot_description')],
   )
 
   joint_state_broadcaster_spawner = Node(
