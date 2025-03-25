@@ -163,10 +163,10 @@ def launch_setup(context, *args, **kwargs):
 
   return [
     rviz_node,
+    move_group_node,
     GroupAction(
       actions=[
         PushRosNamespace(prefix),
-        move_group_node,
         robot_state_publisher_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,
