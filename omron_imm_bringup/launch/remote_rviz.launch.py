@@ -56,8 +56,8 @@ def launch_setup(context, *args, **kwargs):
                                           'omron_ip' :                    omron_base_ip,
                                         }
                                       )
-                                      .planning_scene_monitor(publish_robot_description=False, publish_robot_description_semantic=True)
-                                      .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl', 'pilz_industrial_motion_planner'])
+                                      # .planning_scene_monitor(publish_robot_description=False, publish_robot_description_semantic=True)
+                                      # .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl', 'pilz_industrial_motion_planner'])
                                       .to_moveit_configs()
   )
 
@@ -72,10 +72,18 @@ def launch_setup(context, *args, **kwargs):
     arguments=['-d',rviz_config],
     condition=IfCondition(rviz_arg),
     ros_arguments=['--log-level','warn'],
-    parameters=[
-      moveit_config.to_dict()
-    ],
-    namespace=prefix
+    parameters=[moveit_config.robot_description],
+    # parameters=[
+    #   moveit_config.to_dict()
+    # ],
+    namespace=prefix,
+    # remappings=[('/compute_cartesian_path', '~/compute_cartesian_path'),
+    #             ('/get_planning_scene', '~/get_planning_scene'),
+    #             ('/set_planner_params', '~/set_planner_params'),
+    #             ('/query_planner_interface', '~/query_planner_interface'),
+    #             ('/execute_trajectory', '~/execute_trajectory'),
+    #             ('/move_action', '~/move_action'),
+    #             ]
   )
 
 
