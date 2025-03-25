@@ -110,8 +110,8 @@ def launch_setup(context, *args, **kwargs):
     executable='ros2_control_node',
     parameters=[ld60_params],
     output='screen',
-    arguments=['--ros-args', '--log-level', 'info'],
-    remappings=[('~/robot_description', 'robot_description')]
+    arguments=['--ros-args', '--log-level', 'debug'],
+    remappings=[('~/robot_description', 'robot_description')],
   )
 
   joint_state_broadcaster_spawner = Node(
@@ -123,7 +123,8 @@ def launch_setup(context, *args, **kwargs):
   tm12_controller_spawner = Node(
     package='controller_manager',
     executable='spawner',
-    arguments=['joint_trajectory_controller'],
+    arguments=['joint_trajectory_controller',
+              '--ros-args', '--log-level', 'debug'],
     output='screen'
   )
 
