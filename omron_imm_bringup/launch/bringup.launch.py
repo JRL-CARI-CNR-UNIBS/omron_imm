@@ -162,8 +162,8 @@ def launch_setup(context, *args, **kwargs):
   )
 
   return [
-    rviz_node,
     move_group_node,
+    rviz_node,
     GroupAction(
       actions=[
         PushRosNamespace(prefix),
