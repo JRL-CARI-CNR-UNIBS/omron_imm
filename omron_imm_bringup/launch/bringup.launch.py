@@ -58,18 +58,26 @@ def launch_setup(context, *args, **kwargs):
                                         }
                                       )
                                       .planning_scene_monitor(publish_robot_description=False, publish_robot_description_semantic=True)
-                                      .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl', 'pilz_industrial_motion_planner'])
+                                      # .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl', 'pilz_industrial_motion_planner'])
                                       .to_moveit_configs()
   )
 
   use_moveit = LaunchConfiguration('use_moveit')
+  planning_pipelines_config = PathJoinSubstitution(
+    [
+        FindPackageShare('omron_imm_moveit_config'),
+        "config",
+        "planning_pipelines.yaml",
+    ]
+  )
 
   move_group_node = Node(
     package='moveit_ros_move_group',
     executable='move_group',
     condition=IfCondition(use_moveit),
     output='screen',
-    parameters=[moveit_config.to_dict()],
+    parameters=[moveit_config.to_dict(),
+                planning_pipelines_config],
     arguments=['--ros-args', '--log-level', 'info'],
     remappings=[('joint_states',f'{prefix}/joint_states')],
   )
