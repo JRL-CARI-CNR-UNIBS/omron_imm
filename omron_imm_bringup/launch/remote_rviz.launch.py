@@ -75,7 +75,7 @@ def launch_setup(context, *args, **kwargs):
     parameters=[
       moveit_config.to_dict()
     ],
-    # namespace=prefix
+    namespace=prefix
   )
 
 
