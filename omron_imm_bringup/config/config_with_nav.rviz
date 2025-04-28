@@ -7,15 +7,14 @@ Panels:
         - /Global Options1
         - /Status1
         - /Map1
-        - /Map1/Status1
         - /Map1/Topic1
         - /LaserScan1
         - /LaserScan1/Topic1
         - /Map2
-        - /LaserScan2
         - /LaserScan2/Topic1
-        - /PointCloud21
         - /PointCloud21/Topic1
+        - /LaserScan3/Status1
+        - /LaserScan3/Topic1
       Splitter Ratio: 0.5
     Tree Height: 347
   - Class: rviz_common/Selection
@@ -60,7 +59,7 @@ Visualization Manager:
     - Acceleration_Scaling_Factor: 0.1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
-      Move Group Namespace: "/omron"
+      Move Group Namespace: /omron
       MoveIt_Allow_Approximate_IK: false
       MoveIt_Allow_External_Program: false
       MoveIt_Allow_Replanning: false
@@ -440,6 +439,38 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        azrael/base:
+          Value: true
+        azrael/base_footprint:
+          Value: true
+        azrael/base_link:
+          Value: true
+        azrael/base_link_azrael:
+          Value: true
+        azrael/base_link_inertia:
+          Value: true
+        azrael/flange:
+          Value: true
+        azrael/forearm_link:
+          Value: true
+        azrael/ft_frame:
+          Value: true
+        azrael/laser:
+          Value: true
+        azrael/odom:
+          Value: true
+        azrael/shoulder_link:
+          Value: true
+        azrael/tool0:
+          Value: true
+        azrael/upper_arm_link:
+          Value: true
+        azrael/wrist_1_link:
+          Value: true
+        azrael/wrist_2_link:
+          Value: true
+        azrael/wrist_3_link:
+          Value: true
         map:
           Value: true
         omron/base:
@@ -507,44 +538,26 @@ Visualization Manager:
       Show Names: false
       Tree:
         map:
-          omron/odom:
-            omron/base_footprint:
-              omron/base:
-                omron/link_0:
-                  omron/link_1:
-                    omron/link_2:
-                      omron/link_3:
-                        omron/link_4:
-                          omron/link_5:
-                            omron/link_6:
-                              omron/flange:
-                                omron/robotiq_base_link:
-                                  omron/robotiq_140_base_link:
-                                    omron/left_inner_knuckle:
-                                      {}
-                                    omron/left_outer_knuckle:
-                                      omron/left_outer_finger:
-                                        omron/left_inner_finger:
-                                          omron/left_inner_finger_pad:
-                                            {}
-                                    omron/right_inner_knuckle:
-                                      {}
-                                    omron/right_outer_knuckle:
-                                      omron/right_outer_finger:
-                                        omron/right_inner_finger:
-                                          omron/right_inner_finger_pad:
-                                            {}
-                                omron/tcp:
-                                  {}
-              omron/left_bar:
-                omron/tm_controller:
+          azrael/odom:
+            azrael/base_footprint:
+              azrael/base_link:
+                azrael/base:
                   {}
-              omron/mount_frame:
-                {}
-              omron/right_bar:
-                {}
-              omron/tm_support:
-                {}
+                azrael/base_link_inertia:
+                  azrael/shoulder_link:
+                    azrael/upper_arm_link:
+                      azrael/forearm_link:
+                        azrael/wrist_1_link:
+                          azrael/wrist_2_link:
+                            azrael/wrist_3_link:
+                              azrael/flange:
+                                azrael/tool0:
+                                  {}
+                              azrael/ft_frame:
+                                {}
+              azrael/base_link_azrael:
+                azrael/laser:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
@@ -679,7 +692,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.019999999552965164
+      Size (m): 0.029999999329447746
       Style: Flat Squares
       Topic:
         Depth: 5
@@ -691,6 +704,134 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/LaserScan
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 0
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.03999999910593033
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /azrael/scan
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        azrael/base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/base_link_azrael:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/base_link_inertia:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/flange:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/forearm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/ft_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/laser:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/shoulder_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        azrael/upper_arm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/wrist_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/wrist_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        azrael/wrist_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: RobotModel
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
