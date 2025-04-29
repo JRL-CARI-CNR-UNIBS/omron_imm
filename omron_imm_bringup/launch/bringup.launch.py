@@ -182,8 +182,8 @@ def launch_setup(context, *args, **kwargs):
         tm12_controller_spawner,
         support_nodes,
         omron_state_bcast_spawner,
-        omron_forward_controller
-        # robotiq_gripper_controller_spawner,
-        # robotiq_activation_controller_spawner,
+        omron_forward_controller,
+        robotiq_gripper_controller_spawner,
+        robotiq_activation_controller_spawner,
     ])
 ]
