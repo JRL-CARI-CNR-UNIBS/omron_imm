@@ -29,7 +29,7 @@
     <!-- Robotiq 2F-140 Gripper -->
     <xacro:if value="${include_robotiq_gripper}">
       <xacro:include filename="$(find robotiq_description)/urdf/2f_140.ros2_control.xacro"/>
-      <xacro:robotiq_gripper_ros2_control name="${prefix}omron/robotiq_2f_140" prefix="${prefix}" use_fake_hardware="${use_fake_gripper}"/>
+      <xacro:robotiq_gripper_ros2_control name="${prefix}omron/robotiq_2f_140" prefix="${prefix}" use_fake_hardware="${use_fake_gripper}" com_port:="/dev/ttyUSB1"/>
     </xacro:if>
 
 </xacro:macro>
