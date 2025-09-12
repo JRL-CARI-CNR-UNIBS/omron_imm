@@ -28,6 +28,7 @@ omron:
       omron_forward_controller:
         type: omron/OmronController
 
+
   omron_state_broadcaster:
     ros__parameters:
       tf:
@@ -140,3 +141,89 @@ omron:
   #          - "angular/x"
   #          - "angular/y"
             - "angular/z"
+
+  cnr_admittance_controller:
+    ros__parameters:
+      type: cnr_admittance_controller/AdmittanceController
+      robot_description: ""  # to be set by launch file
+      update_rate: 100
+      joints:
+        - omron/joint_1
+        - omron/joint_2
+        - omron/joint_3
+        - omron/joint_4
+        - omron/joint_5
+        - omron/joint_6
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      chainable_command_interfaces:
+        - position
+        - velocity
+      kinematics:
+        plugin_name: kinematics_interface_kdl/KinematicsInterfaceKDL
+        plugin_package: kinematics_interface
+        base: omron/base_footprint
+        tip: omron/robotiq_ft_frame_id
+        group_name: omron_arm
+        alpha: 0.0005
+      ft_sensor:
+        name: omron/robotiq_ft_sensor
+        frame:
+          id: omron/ft300s_sensor
+          external: false
+        low_pass_filter_frequency: 10.0
+        force_deadband: 2.0
+        torque_deadband: 2.0
+        bias_cycles: 100
+      control:
+        frame:
+          id: omron/base_footprint
+          external: false
+      fixed_world_frame:
+        frame:
+          id: omron/base_footprint
+          external: false
+      gravity_compensation:
+        frame:
+          id: omron/ft300s_sensor
+          external: false
+        CoG: # TODO: To Change!!!!!!
+          pos: [0.0, 0.0, 0.0]
+          force: 0.0
+      admittance:
+        selected_axes:
+          - true  # x
+          - true  # y
+          - true  # z
+          - false  # rx
+          - false  # ry
+          - false  # rz
+        mass: # F = M*a + D*v + S*(x - x_d)
+          - 1.0
+          - 1.0
+          - 1.0
+          - 1.0
+          - 1.0
+          - 1.0
+        damping_ratio: # damping can be used instead: zeta = D / (2 * sqrt( M * S ))
+          - 2.828427
+          - 2.828427
+          - 2.828427
+          - 2.828427
+          - 2.828427
+          - 2.828427
+        stiffness:
+          - 90.0
+          - 90.0
+          - 90.0
+          - 9.0
+          - 9.0
+          - 9.0
+
+  ft_broadcaster:
+    ros__parameters:
+      frame_id: omron/ft300s_sensor
+      sensor_name: omron/robotiq_ft_sensor

@@ -4,7 +4,7 @@
   <xacro:macro name="omron_imm" params="name">
 
   <xacro:arg name="ns" default="" />
-  <xacro:arg name="prefix" default="" /> -->
+  <xacro:arg name="prefix" default="" />
   <xacro:property name="trans_hw_iface" default="hardware_interface/PositionJointInterface" />
   <!-- <xacro:arg name="use_ros2_control_gripper" default="false"/> -->
 

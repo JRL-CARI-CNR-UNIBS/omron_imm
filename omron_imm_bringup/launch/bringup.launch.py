@@ -9,6 +9,9 @@ from launch_ros.substitutions import FindPackageShare
 
 from moveit_configs_utils import MoveItConfigsBuilder
 
+from nav2_common.launch import RewrittenYaml
+import xacro
+
 package_name = 'omron_imm_bringup'
 
 def generate_launch_description():
@@ -37,25 +40,30 @@ def launch_setup(context, *args, **kwargs):
   use_fake_ft_sensor        = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_ft_sensor')).perform(context)
   use_fake_gripper          = OrSubstitution(use_fake_hardware, LaunchConfiguration('use_fake_gripper')).perform(context)
 
-  include_robotiq_ft_sensor = LaunchConfiguration('include_robotiq_ft_sensor')
-  include_robotiq_gripper   = LaunchConfiguration('include_robotiq_gripper')
+  include_robotiq_ft_sensor = LaunchConfiguration('include_robotiq_ft_sensor').perform(context)
+  include_robotiq_gripper   = LaunchConfiguration('include_robotiq_gripper').perform(context)
 
   omron_base_ip = LaunchConfiguration('omron_base_ip').perform(context)
 
+  robot_description_mappings = {
+                                  'use_fake_omron':               use_fake_omron,
+                                  'use_fake_tm' :                 use_fake_tm,
+                                  'include_robotiq_ft_sensor' :   include_robotiq_ft_sensor,
+                                  'use_fake_ft_sensor' :          use_fake_ft_sensor,
+                                  'include_robotiq_gripper' :     include_robotiq_gripper,
+                                  'use_fake_gripper' :            use_fake_gripper,
+                                  'prefix' :                      f'{prefix}/',
+                                  'omron_ip' :                    omron_base_ip,
+                                }
+
   xacro_path = PathJoinSubstitution([FindPackageShare('omron_imm_description'),'urdf','system.urdf.xacro']).perform(context)
+  urdf = xacro.process(xacro_path,
+         mappings=robot_description_mappings)
+
   moveit_config = (MoveItConfigsBuilder('omron_imm', package_name='omron_imm_moveit_config')
                                       .robot_description(
                                         file_path=xacro_path,
-                                        mappings={
-                                          'use_fake_omron':               use_fake_omron,
-                                          'use_fake_tm' :                 use_fake_tm,
-                                          'include_robotiq_ft_sensor' :   include_robotiq_ft_sensor,
-                                          'use_fake_ft_sensor' :          use_fake_ft_sensor,
-                                          'include_robotiq_gripper' :     include_robotiq_gripper,
-                                          'use_fake_gripper' :            use_fake_gripper,
-                                          'prefix' :   f'{prefix}/',
-                                          'omron_ip' :                    omron_base_ip,
-                                        }
+                                        mappings=robot_description_mappings
                                       )
                                       .planning_scene_monitor(publish_robot_description=False, publish_robot_description_semantic=True)
                                       # .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl', 'pilz_industrial_motion_planner'])
@@ -103,12 +111,16 @@ def launch_setup(context, *args, **kwargs):
     ]
   )
 
-  ld60_params = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'ros2_controllers.yaml'])
+  original_controller_config = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'ros2_controllers.yaml'])
+  config_rewrite = RewrittenYaml(
+    source_file=original_controller_config,
+    param_rewrites={'robot_description' : urdf}
+  )
 
   ros2_control_node = Node(
     package='controller_manager',
     executable='ros2_control_node',
-    parameters=[ld60_params],
+    parameters=[config_rewrite],
     output='screen',
     # arguments=['--ros-args', '--log-level', 'debug'],
     remappings=[('~/robot_description', 'robot_description')],
@@ -131,7 +143,7 @@ def launch_setup(context, *args, **kwargs):
   support_nodes = Node(
     package='omron_hardware_interface',
     executable='omron_support_nodes',
-    parameters=[ld60_params],
+    parameters=[config_rewrite],
     output='screen',
     condition=UnlessCondition(use_fake_omron),
     arguments=[omron_base_ip]
@@ -162,12 +174,28 @@ def launch_setup(context, *args, **kwargs):
   #   executable='spawner',
   #   arguments=['omron_fake_pose_controller'],
   #   condition=IfCondition(use_fake_omron),
-  # )
+  # )  
+
+  cnr_admittance_controller_spawner = Node(
+    package='controller_manager',
+    executable='spawner',
+    arguments=['cnr_admittance_controller',
+    '-p', config_rewrite,
+    '-t', 'cnr_admittance_controller/AdmittanceController',
+    '--inactive'],
+  )
 
   omron_forward_controller = Node(
     package='controller_manager',
     executable='spawner',
     arguments=['omron_forward_controller'],
+  )
+
+  ft_sensor_broadcaster_spawner = Node(
+    package='controller_manager',
+    executable='spawner',
+    arguments=['ft_sensor_broadcaster'],
+    condition=UnlessCondition(use_fake_ft_sensor),
   )
 
   return [
@@ -185,5 +213,7 @@ def launch_setup(context, *args, **kwargs):
         omron_forward_controller,
         robotiq_gripper_controller_spawner,
         robotiq_activation_controller_spawner,
+        cnr_admittance_controller_spawner,
+        ft_sensor_broadcaster_spawner
     ])
 ]
