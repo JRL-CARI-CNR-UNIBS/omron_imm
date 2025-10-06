@@ -19,9 +19,6 @@ def generate_launch_description():
     name='tm_moveit_standalone_node',
     output='screen',
     parameters=[LaunchConfiguration('config_path')],
-    remappings=[
-            ('tmr_arm_controller/follow_joint_trajectory',
-             '/omron/joint_trajectory_controller/follow_joint_trajectory')
-        ]
+
   )
   return LaunchDescription([config_path, tm_moveit_standalone])
