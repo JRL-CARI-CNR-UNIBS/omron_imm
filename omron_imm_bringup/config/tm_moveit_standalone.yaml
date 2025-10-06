@@ -8,3 +8,4 @@ tm_moveit_standalone:
       - /omron/joint_5
       - /omron/joint_6
     robot_ip: "169.254.49.101"
+    action_name: "/omron/joint_trajectory_controller/follow_joint_trajectory"
