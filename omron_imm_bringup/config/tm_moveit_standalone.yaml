@@ -1,0 +1,10 @@
+tm_moveit_standalone:
+  ros__parameters:
+    joints:
+      - /omron/joint_1
+      - /omron/joint_2
+      - /omron/joint_3
+      - /omron/joint_4
+      - /omron/joint_5
+      - /omron/joint_6
+    robot_ip: "169.254.49.101"
