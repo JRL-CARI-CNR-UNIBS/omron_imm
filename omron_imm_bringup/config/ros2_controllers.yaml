@@ -3,10 +3,13 @@ omron:
     ros__parameters:
       map: "/omron/map" #topic
       odom: "/omron/odom" #topic
-      frame: "omron/base_footprint" #tf
+      map_frame: "map" #tf
+      base_frame: "omron/base_footprint" #tf
 
   controller_manager:
     ros__parameters:
+      update_rate: 100
+
       omron_state_broadcaster:
         type: omron/OmronStateBroadcaster
 
@@ -27,6 +30,9 @@ omron:
       
       omron_forward_controller:
         type: omron/OmronController
+
+      ft_broadcaster:
+        type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
 
 
   omron_state_broadcaster:
@@ -81,6 +87,12 @@ omron:
     ros__parameters:
       default: true
       joint: omron/finger_joint
+      allow_stalling: true
+      goal_tolerance: 0.001
+      max_effort: 20.0
+      stall_timeout: 2.5
+      stall_velocity_threshold: 0.001
+
 
   robotiq_activation_controller:
     ros__parameters:
