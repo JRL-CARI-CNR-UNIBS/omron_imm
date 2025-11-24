@@ -72,7 +72,12 @@ def launch_setup(context, *args, **kwargs):
     arguments=['-d',rviz_config],
     condition=IfCondition(rviz_arg),
     ros_arguments=['--log-level','warn'],
-    parameters=[moveit_config.robot_description],
+    parameters=[moveit_config.robot_description,
+                moveit_config.joint_limits,
+                moveit_config.robot_description_kinematics,
+                moveit_config.planning_pipelines,
+              ],
+    
     # parameters=[
     #   moveit_config.to_dict()
     # ],
